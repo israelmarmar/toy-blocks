@@ -15,7 +15,7 @@ export const checkNodeStatus = createAsyncThunk(
     const responseBlocks = await fetch(`${node.url}/api/v1/blocks`);
     const status: { node_name: string } = await responseStatus.json();
     const blocks = await responseBlocks.json();
-    return { ...status, blocks: blocks.data};
+    return { ...status, blocks, data: blocks.data};
   }
 );
 
@@ -44,7 +44,6 @@ export const nodesSlice = createSlice({
         node.online = true;
         node.loading = false;
         node.name = action.payload.node_name;
-        node.blocks = action.payload.blocks;
       }
     });
     builder.addCase(checkNodeStatus.rejected, (state, action) => {

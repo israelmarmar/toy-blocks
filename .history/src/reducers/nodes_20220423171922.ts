@@ -11,11 +11,18 @@ export interface NodesState {
 export const checkNodeStatus = createAsyncThunk(
   "nodes/checkNodeStatus",
   async (node: Node) => {
-    const responseStatus = await fetch(`${node.url}/api/v1/status`);
-    const responseBlocks = await fetch(`${node.url}/api/v1/blocks`);
-    const status: { node_name: string } = await responseStatus.json();
-    const blocks = await responseBlocks.json();
-    return { ...status, blocks: blocks.data};
+    const response = await fetch(`${node.url}/api/v1/status`);
+    const data: { node_name: string } = await response.json();
+    return data;
+  }
+);
+
+export const checkNodeBlocks = createAsyncThunk(
+  "blocks",
+  async (node: Node) => {
+    const response = await fetch(`${node.url}/api/v1/status`);
+    const data: { node_name: string } = await response.json();
+    return data;
   }
 );
 
@@ -34,6 +41,36 @@ export const nodesSlice = createSlice({
   initialState: initialState().nodes as NodesState,
   reducers: {},
   extraReducers: (builder) => {
+    builder
+      .addCase(checkNodeBlocks.pending, (state, action) => {
+        const node = state.list.find((n) => n.url === action.meta.arg.url);
+        if (node)
+          node.loading = true;
+      })
+      .addCase(checkNodeBlocks.fulfilled, (state, action) => {
+        const node = state.list.find((n) => n.url === action.meta.arg.url);
+        const { requestId } = action.meta
+        if (
+          state.loading === 'pending' &&
+          state.currentRequestId === requestId
+        ) {
+          state.loading = 'idle'
+          state.entities.push(action.payload)
+          state.currentRequestId = undefined
+        }
+      })
+      .addCase(checkNodeBlocks.rejected, (state, action) => {
+        const node = state.list.find((n) => n.url === action.meta.arg.url);
+        const { requestId } = action.meta
+        if (
+          state.loading === 'pending' &&
+          state.currentRequestId === requestId
+        ) {
+          state.loading = 'idle'
+          state.error = action.error
+          state.currentRequestId = undefined
+        }
+      });
     builder.addCase(checkNodeStatus.pending, (state, action) => {
       const node = state.list.find((n) => n.url === action.meta.arg.url);
       if (node) node.loading = true;
@@ -44,7 +81,6 @@ export const nodesSlice = createSlice({
         node.online = true;
         node.loading = false;
         node.name = action.payload.node_name;
-        node.blocks = action.payload.blocks;
       }
     });
     builder.addCase(checkNodeStatus.rejected, (state, action) => {

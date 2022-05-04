@@ -15,6 +15,7 @@ export const checkNodeStatus = createAsyncThunk(
     const responseBlocks = await fetch(`${node.url}/api/v1/blocks`);
     const status: { node_name: string } = await responseStatus.json();
     const blocks = await responseBlocks.json();
+    console.log({ ...status, blocks: blocks.data})
     return { ...status, blocks: blocks.data};
   }
 );

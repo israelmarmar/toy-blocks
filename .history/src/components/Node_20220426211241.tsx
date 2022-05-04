@@ -59,14 +59,7 @@ const boxStyled = {
 const blockStyled = {
   marginLeft: 13.64,
   marginRight: 13.64,
-  marginBottom: 12
-}
-
-const indexH = {
-  fontFamily: "roboto",
-  fontWeight: 700,
-  fontSize: 10,
-  color: "#304FFE"
+  marginBottom: 88
 }
 
 const TypographyHeading = styled(Typography)({
@@ -107,7 +100,6 @@ const Node: React.FC<Props> = ({ node, expanded, toggleNodeExpanded }) => {
       {node.blocks && node.blocks.map((block: any) =>{
         return(block.attributes ?
           <Box style={boxStyled}>
-            <h1 style={indexH}>{block.attributes.index}</h1>
             {block.attributes.data}
           </Box>
         : <span></span>);

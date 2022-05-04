@@ -3,6 +3,7 @@ import initialState from "./initialState";
 import { Node } from "../types/Node";
 import { RootState } from "../store/configureStore";
 import fetch from "cross-fetch";
+import { Block } from "../types/Block";
 
 export interface NodesState {
   list: Node[];
@@ -12,22 +13,12 @@ export const checkNodeStatus = createAsyncThunk(
   "nodes/checkNodeStatus",
   async (node: Node) => {
     const responseStatus = await fetch(`${node.url}/api/v1/status`);
-    const responseBlocks = await fetch(`${node.url}/api/v1/blocks`);
-    const status: { node_name: string } = await responseStatus.json();
-    const blocks = await responseBlocks.json();
-    return { ...status, blocks: blocks.data};
+    const blocks = await fetch(`${node.url}/api/v1/blocks`);
+    const data: { node_name: string } = await responseStatus.json();
+    return { ...data, blocks};
   }
 );
 
-export const checkNodesStatus = createAsyncThunk(
-  "nodes/checkNodesStatus",
-  async (nodes: Node[], thunkAPI) => {
-    const { dispatch } = thunkAPI;
-    nodes.forEach((node) => {
-      dispatch(checkNodeStatus(node));
-    });
-  }
-);
 
 export const nodesSlice = createSlice({
   name: "nodes",
@@ -44,7 +35,6 @@ export const nodesSlice = createSlice({
         node.online = true;
         node.loading = false;
         node.name = action.payload.node_name;
-        node.blocks = action.payload.blocks;
       }
     });
     builder.addCase(checkNodeStatus.rejected, (state, action) => {

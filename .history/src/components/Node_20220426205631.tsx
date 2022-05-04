@@ -47,26 +47,13 @@ const BoxSummaryContent = styled(Box)({
 });
 
 const boxStyled = {
-  backgroundColor: "rgba(0, 0, 0, 0.12)",
   marginTop: 8,
-  marginLeft: 8,
-  paddingTop: 8,
-  paddingLeft: 8,
-  paddingBottom: 8,
-  marginBottom: 8
+  marginLeft: 8
 }
 
 const blockStyled = {
-  marginLeft: 13.64,
-  marginRight: 13.64,
-  marginBottom: 12
-}
-
-const indexH = {
-  fontFamily: "roboto",
-  fontWeight: 700,
-  fontSize: 10,
-  color: "#304FFE"
+  marginTop: 12,
+  marginLeft: 13.64
 }
 
 const TypographyHeading = styled(Typography)({
@@ -103,16 +90,13 @@ const Node: React.FC<Props> = ({ node, expanded, toggleNodeExpanded }) => {
           <Status loading={node.loading} online={node.online} />
         </BoxSummaryContent>
       </AccordionSummaryContainer>
-      <Box style={blockStyled}>
       {node.blocks && node.blocks.map((block: any) =>{
         return(block.attributes ?
-          <Box style={boxStyled}>
-            <h1 style={indexH}>{block.attributes.index}</h1>
-            {block.attributes.data}
-          </Box>
-        : <span></span>);
-      })}
-      </Box>
+         <Box style={boxStyled}>
+          {block.attributes.data}
+        </Box>: <span></span>);
+      }
+      )}
     </AccordionRoot>
   );
 };

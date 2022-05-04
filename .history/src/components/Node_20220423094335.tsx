@@ -11,6 +11,7 @@ import { styled } from "@mui/material/styles";
 import colors from "../constants/colors";
 import Status from "./Status";
 import { Node as NodeType } from "../types/Node";
+import axios from "axios";
 
 type Props = {
   node: NodeType;
@@ -46,29 +47,6 @@ const BoxSummaryContent = styled(Box)({
   paddingRight: 20,
 });
 
-const boxStyled = {
-  backgroundColor: "rgba(0, 0, 0, 0.12)",
-  marginTop: 8,
-  marginLeft: 8,
-  paddingTop: 8,
-  paddingLeft: 8,
-  paddingBottom: 8,
-  marginBottom: 8
-}
-
-const blockStyled = {
-  marginLeft: 13.64,
-  marginRight: 13.64,
-  marginBottom: 12
-}
-
-const indexH = {
-  fontFamily: "roboto",
-  fontWeight: 700,
-  fontSize: 10,
-  color: "#304FFE"
-}
-
 const TypographyHeading = styled(Typography)({
   fontSize: 17,
   display: "block",
@@ -83,6 +61,17 @@ const TypographySecondaryHeading = styled(Typography)(({ theme }) => ({
 }));
 
 const Node: React.FC<Props> = ({ node, expanded, toggleNodeExpanded }) => {
+  const [blocks, setBlocks ] = useState([]);
+
+  useEffect(()=>{
+    axios.get(`${node.url}/api/v1/status`)
+    .then(response=>{
+      setBlocks(response.data);
+    })
+    .catch(e=>{
+
+    })
+  })
 
   return (
     <AccordionRoot
@@ -103,16 +92,9 @@ const Node: React.FC<Props> = ({ node, expanded, toggleNodeExpanded }) => {
           <Status loading={node.loading} online={node.online} />
         </BoxSummaryContent>
       </AccordionSummaryContainer>
-      <Box style={blockStyled}>
-      {node.blocks && node.blocks.map((block: any) =>{
-        return(block.attributes ?
-          <Box style={boxStyled}>
-            <h1 style={indexH}>{block.attributes.index}</h1>
-            {block.attributes.data}
-          </Box>
-        : <span></span>);
-      })}
-      </Box>
+      <AccordionDetails>
+        <Typography>Blocks go here</Typography>
+      </AccordionDetails>
     </AccordionRoot>
   );
 };

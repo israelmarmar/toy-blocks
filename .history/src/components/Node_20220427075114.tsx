@@ -107,7 +107,6 @@ const Node: React.FC<Props> = ({ node, expanded, toggleNodeExpanded }) => {
       {node.blocks && node.blocks.map((block: any) =>{
         return(block.attributes ?
           <Box style={boxStyled}>
-            <h1 style={indexH}>{block.attributes.index}</h1>
             {block.attributes.data}
           </Box>
         : <span></span>);

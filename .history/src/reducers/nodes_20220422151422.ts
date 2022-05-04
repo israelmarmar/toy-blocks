@@ -11,11 +11,9 @@ export interface NodesState {
 export const checkNodeStatus = createAsyncThunk(
   "nodes/checkNodeStatus",
   async (node: Node) => {
-    const responseStatus = await fetch(`${node.url}/api/v1/status`);
-    const responseBlocks = await fetch(`${node.url}/api/v1/blocks`);
-    const status: { node_name: string } = await responseStatus.json();
-    const blocks = await responseBlocks.json();
-    return { ...status, blocks: blocks.data};
+    const response = await fetch(`${node.url}/api/v1/status`);
+    const data: { node_name: string } = await response.json();
+    return data;
   }
 );
 
@@ -44,7 +42,6 @@ export const nodesSlice = createSlice({
         node.online = true;
         node.loading = false;
         node.name = action.payload.node_name;
-        node.blocks = action.payload.blocks;
       }
     });
     builder.addCase(checkNodeStatus.rejected, (state, action) => {
